@@ -36,17 +36,18 @@ async function getLastMessagesFromRoom(room){
     return roomMessages
 }
 
-// function sortRoomMessagesByDate(messages){
+function sortRoomMessagesByDate(messages){
 
-//     return messages.sort(function(a, b){
-//         let date1 = a._id.split('/');
-//         let date2 = a._id.split('/');
-//         date1 = date1[2] + date1[0] + date1[1]
-//         date2 = date2[2] + date2[0] + date2[1]
+    return messages.sort(function(a, b){
+        let date1 = a._id.split('/');
+        let date2 = a._id.split('/');
+        date1 = date1[2] + date1[0] + date1[1]
+        date2 = date2[2] + date2[0] + date2[1]
 
-//         return date1 < date2 ? -1 : 1
-//     })
-// }
+        return date1 < date2 ? -1 : 1
+    })
+}
+ 
 //socket connection
 
 io.on('connection' ,(socket)=>{
@@ -59,7 +60,7 @@ io.on('connection' ,(socket)=>{
         socket.join(newRoom)
         socket.leave(previousRoom)
         let roomMessages = await getLastMessagesFromRoom(newRoom);
-        // roomMessages = sortRoomMessagesByDate(roomMessages);
+        roomMessages = sortRoomMessagesByDate(roomMessages);
         socket.emit('room-messages', roomMessages)
     })
 
@@ -67,7 +68,8 @@ io.on('connection' ,(socket)=>{
         
         const newMessage = await Message.create({content, from:sender, time , date , to:room})
         let roomMessages = await getLastMessagesFromRoom(room);
-        // // roomMessages = sortRoomMessagesByDate(roomMessages);
+        roomMessages = sortRoomMessagesByDate(roomMessages);
+
         //connecting message to room 
         io.to(room).emit('room-messages',roomMessages);
      
